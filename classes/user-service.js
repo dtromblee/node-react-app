@@ -3,6 +3,7 @@ const fs = require('fs');
 const _ = require('lodash');
 
 class UserService {
+	// TODO: Rebuild using promises. Seems like bluebird is the best library by general internet consensus
 	constructor() {}
 
 	addUser(userObj) {
@@ -48,11 +49,6 @@ class UserService {
 
 	getUsers() {
 		let usersObj;
-		// TODO Modify this to be singleton pattern to reduce unnecessary reads
-		// Reference https://www.dofactory.com/javascript/singleton-design-pattern
-
-
-		// if (this.usersCache) console.log('getUsers exsits; no instantiation should be needed');
 
 		this.usersCache = this.usersCache ? this.usersCache : this.instantiateUsers();
 		return this.usersCache;
