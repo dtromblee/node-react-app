@@ -8,11 +8,16 @@ class UserService {
 	constructor() {}
 
 	addUser(userObj) {
-		let user = new User(userObj);
+		let user;
+		try {
+			user = new User(userObj);
+		} catch (e) {
+			console.error('Error adding user; user config invalid.', e);
+			return false;
+		}
 		let duplicateUsers = this.getUser(user.username);
-		console.log('Duplicate Users', duplicateUsers);
 
-		if (duplicateUsers && duplicateUsers.length > 0) {
+		if (duplicateUsers) {
 			console.error('Error adding user; user already exists');
 			return false;
 		}
@@ -54,27 +59,29 @@ class UserService {
 	getUsers() {
 		let usersObj;
 
-		this.usersCache = this.usersCache ? this.usersCache : this.instantiateUsers();
-		return this.usersCache;
+		// TODO Figure out a better method for storing user data in cache
+		// this.usersCache = this.usersCache ? this.usersCache : this.instantiateUsers();
+		// return this.usersCache;
+		return this.instantiateUsers();
 	}
 
 	instantiateUsers() {
 		let usersObj;
-		console.log('Instantaite start');
+
 		try {
 			usersObj = JSON.parse(fs.readFileSync('./data/users.json'));
 		} catch (e) {
 			console.log('users.json doesn\'t exist: returning empty user array');
 			usersObj = [];
 		}
-		console.log('First getUsers instantiation');
+
 		return usersObj instanceof Array ? usersObj: [usersObj];
 	}
 
 	getUser(username) {
 		let users = this.getUsers();
 		let user = users.filter(function(user) {return user.username === username;})[0];
-		return user ? (user instanceof Array ? user : [user]) : [];
+		return user || undefined;
 	}
 
 	saveUsers(users) {

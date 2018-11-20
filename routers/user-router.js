@@ -8,6 +8,10 @@ router.get('/', (req, res) => {
   res.send(JSON.stringify(userService.getUsers(), null, 3));
 });
 
+router.get('/:id', (req, res) => {
+  res.send(JSON.stringify(userService.getUser(), null, 3));
+});
+
 router.post('/', (req, res) => {
   let success = userService.addUser(req.body);
 
@@ -20,7 +24,6 @@ router.post('/', (req, res) => {
 });
 
 router.delete('/', (req, res) => {
-  console.log('here');
   let success = userService.removeUser(req.body.username);
 
   if (success) {

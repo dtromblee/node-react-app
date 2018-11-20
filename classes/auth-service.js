@@ -5,6 +5,7 @@ let userService = new UserService();
 class AuthService {
 	authenticate(username, password) {
 		let user = userService.getUser(username);
+
 		return user.password === password;
 	}
 
@@ -18,6 +19,8 @@ class AuthService {
 		user.password = newPassword;
 
 		userService.updateUser(user);
+
+		return true;
 	}
 }
 module.exports = AuthService;

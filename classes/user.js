@@ -1,18 +1,20 @@
 class User {
-	constructor(config) {
-		this.username = config.username,
-		this.email = config.email,
-		this.password = config.password;
+	constructor(userObj) {
+		if (!(User.isValidUser(userObj))) throw new Error('Error: Invalid User Configuration');
+
+		this.username = userObj.username,
+		this.email = userObj.email,
+		this.password = userObj.password;
 	}
 
 	info() {
 		console.log(`${this.username} ${this.email} ${this.password}`);
 	}
 
-	isValid(userObj) {
-		return userObj.username &&
+	static isValidUser(userObj) {
+		return !!(userObj.username &&
 			userObj.email &&
-			userObj.password;
+			userObj.password);
 	}
 }
 
