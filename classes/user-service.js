@@ -1,6 +1,7 @@
-const User = require('./user.js');
 const fs = require('fs');
 const _ = require('lodash');
+const User = require('./user');
+const Helpers = require('../util/helpers');
 
 class UserService {
 	// TODO: Rebuild using promises. Seems like bluebird is the best library by general internet consensus
@@ -17,7 +18,10 @@ class UserService {
 		}
 
 		let users = this.getUsers();
+
+		user.id = Helpers.topId(users) + 1;
 		users.push(user);
+
 		this.saveUsers(users);
 		return true;
 	}

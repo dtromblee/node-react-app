@@ -1,4 +1,4 @@
-const UserService = require('./user-service.js');
+const UserService = require('./user-service');
 
 let userService = new UserService();
 
@@ -20,4 +20,4 @@ class AuthService {
 		userService.updateUser(user);
 	}
 }
-module.exports = AuthService; 
+module.exports = AuthService;
