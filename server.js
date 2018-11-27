@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const util = require('util');
 
-const userRouter = require('./routers/user-router');
+const userRouter = require('./controllers/user');
 
 let app = express();
 let port = process.env.PORT || 3000;

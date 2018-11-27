@@ -1,7 +1,8 @@
 const fs = require('fs');
 const _ = require('lodash');
-const User = require('./user');
-const Helpers = require('../util/helpers');
+
+const User = require('../models/user');
+const Helpers = require('../utils/helpers');
 
 class UserService {
 	// TODO: Rebuild using promises. Seems like bluebird is the best library by general internet consensus

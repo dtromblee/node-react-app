@@ -1,5 +1,5 @@
 const assert = require('assert');
-const User = require('../classes/user');
+const User = require('../models/user');
 
 describe('Class: User', () => {
   const validTestUserObj = {

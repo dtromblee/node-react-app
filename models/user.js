@@ -5,6 +5,12 @@ class User {
 		this.username = userObj.username,
 		this.email = userObj.email,
 		this.password = userObj.password;
+
+		let validOptionalProperties = ['id'];
+
+		validOptionalProperties.forEach((prop) => {
+			if(Object.hasOwnProperty(prop)) this[prop] = userObj[prop];
+		});
 	}
 
 	info() {

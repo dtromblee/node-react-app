@@ -1,5 +1,5 @@
 const assert = require('assert');
-const Helpers = require('../util/helpers');
+const Helpers = require('./helpers');
 
 describe('Helpers', () => {
   describe('#topId()', () => {

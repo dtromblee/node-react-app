@@ -1,5 +1,5 @@
 const express = require('express');
-const UserService = require('../classes/user-service');
+const UserService = require('../middlewares/user-service');
 
 let router = express.Router();
 let userService = new UserService();
@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  res.send(JSON.stringify(userService.getUser(), null, 3));
+  res.send(JSON.stringify(userService.getUser(req.params.id), null, 3));
 });
 
 router.post('/', (req, res) => {

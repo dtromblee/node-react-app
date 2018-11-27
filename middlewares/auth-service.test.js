@@ -1,5 +1,5 @@
-const UserService = require('../classes/user-service');
-const AuthService = require('../classes/auth-service');
+const UserService = require('./user-service');
+const AuthService = require('./auth-service');
 const assert = require('assert');
 
 let testUsername = undefined;
