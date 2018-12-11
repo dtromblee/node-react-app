@@ -2,6 +2,9 @@
   "name": "node-react-app",
   "version": "1.0.0",
   "description": "Sandbox for React and Node Learning",
+  "engines" : {
+    "node" : ">=10.13.0"
+  },
   "main": "server.js",
   "scripts": {
     "test": "mocha \"./tests/**/*.spec.js\" --exit",
