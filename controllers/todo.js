@@ -1,6 +1,12 @@
 const express = require('express');
 const {ObjectID} = require('mongodb');
-let mongoose = require('../connections/local');
+
+if (process.env.MONGODB_URI) {
+  let mongoose = require('../connections/heroku');
+} else {
+  let mongoose = require('../connections/local');
+}
+
 const Todo = require('../models/todo');
 
 let router = express.Router();

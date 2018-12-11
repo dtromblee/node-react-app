@@ -3,10 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const util = require('util');
 let mongoose = require('mongoose');
-
-// const userRouter = require('./controllers/user');
 const todoRouter = require('./controllers/todo');
-
 
 // let Todo = mongoose.model('Todo', {
 //   text: {
