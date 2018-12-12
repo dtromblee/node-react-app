@@ -1,11 +1,8 @@
 const express = require('express');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
 
-if (process.env.MONGODB_URI) {
-  let mongoose = require('../connections/heroku');
-} else {
-  let mongoose = require('../connections/local');
-}
+let mongoose = process.env.MONGODB_URI !== undefined ? require('../connections/heroku') : require('../connections/local');
 
 const Todo = require('../models/todo');
 
@@ -16,7 +13,10 @@ router.get('/', (req, res) => {
     .then((results) => {
       res.send({results});
     }, (err) => {
-      res.send(err);
+      res.status(404).send(err);
+    })
+    .catch((err) =>  {
+      res.status(400).send(err);
     });
 });
 
@@ -32,27 +32,44 @@ router.get('/:id', (req, res) => {
       }
     }, (err) => {
       res.send(err);
+    })
+    .catch((err) =>  {
+      res.status(400).send(err);
     });
 });
 
 router.post('/', (req, res) => {
-  let todo = new Todo(req.body)
+  // TODO Decide if should still allow _id
+  let validValues = _setCompletedAt(_.pick(req.body,  ['_id', 'title', 'description', 'completed']));
+  let todo = new Todo(validValues);
 
   todo.save()
     .then((result) => {
       res.send({result});
     }, (err) => {
       res.status(400).send(err);
+    })
+    .catch((err) =>  {
+      res.status(400).send(err);
     });
 });
 
-router.put('/:id', (req, res) => {
+router.patch('/:id', (req, res) => {
   if (!ObjectID.isValid(req.params.id)) return res.status(404).send('Invalid Id Supplied');
 
-  Todo.findByIdAndUpdate(req.params.id, req.body, {new: true})
+  let validValues = _setCompletedAt(_.pick(req.body,  ['title', 'description', 'completed']));
+
+  Todo.findByIdAndUpdate(req.params.id, validValues, {new: true})
     .then((result) => {
-      res.send({result});
+      if (result) {
+        res.send({result});
+      } else {
+        res.status(404).send('Todo could not be updated');
+      }
     }, (err) => {
+      res.status(404).send(err);
+    })
+    .catch((err) =>  {
       res.status(400).send(err);
     });
 });
@@ -62,10 +79,28 @@ router.delete('/:id', (req, res) => {
 
   Todo.findByIdAndDelete(req.params.id)
     .then((result) => {
-      res.send(result);
+      if (result) {
+        res.send(result);
+      } else {
+        res.status(400).send('Todo could not be deleted');
+      }
     }, (err) => {
-      res.status(400).send(err);
+      res.status(404).send(err);
     })
+    .catch((err) =>  {
+      res.status(400).send(err);
+    });
 });
+
+function _setCompletedAt(todo, isNew) {
+  // TODO Refactor to do safer existing item completedAt value
+  if (_.isBoolean(todo.completed) && todo.completed) {
+    todo.completedAt = Date.now();
+  } else if (!todo.completed) {
+    todo.completedAt = null;
+  }
+  console.log(todo);
+  return todo;
+}
 
 module.exports = router;

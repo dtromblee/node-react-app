@@ -96,7 +96,7 @@ describe('Todo API', () => {
     });
   });
 
-  describe('PUT /todos/:id', () => {
+  describe('PATCH /todos/:id', () => {
     it('should update the expected todo with the supplied properties', () => {
       let id = todos[0]._id.toString();
       let updateValues = {
@@ -106,7 +106,7 @@ describe('Todo API', () => {
       };
 
       request(app)
-        .put(`/todos/${id}`)
+        .patch(`/todos/${id}`)
         .send(updateValues)
         .expect(200)
         .expect((res) => {
