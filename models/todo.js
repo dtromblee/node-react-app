@@ -3,23 +3,23 @@ let validator = require('validator');
 
 let schema = new mongoose.Schema({
 	title: {
-		type: String,
+		type: 'String',
 		required: true,
 		trim: true,
 		min: 1,
 	},
 	description: {
-		type: String,
+		type: 'String',
 		required: false,
 		trim: true,
     min: 1
 	},
 	completed: {
-		type: Boolean,
+		type: 'Boolean',
 		default: false
 	},
 	completedAt: {
-		type: Number,
+		type: 'Number',
     default: null
 	},
 
