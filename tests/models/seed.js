@@ -47,6 +47,18 @@ for(let i=userSeedCount; i>=0; i--) {
   users.push(userObj);
 }
 
+newUsers = [];
+let timestamp = Date.now();
+
+let newUserObj = {
+  username: `test_user_${timestamp}`,
+  email: `testemail${timestamp}@testmail.com`,
+  password: 'Testing1234'
+};
+
+newUsers.push(newUserObj);
+
+
 // todo uncomment when implementing admin-level api endpoints
 // let adminId = new ObjectID();
 
@@ -81,5 +93,6 @@ module.exports = {
   todos,
   populateTodos,
   users,
+  newUsers,
   populateUsers
 };

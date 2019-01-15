@@ -26,5 +26,6 @@ let schema = new mongoose.Schema({
 });
 
 var model = mongoose.model('Todo', schema);
+model.createIndexes();
 
 module.exports = model;

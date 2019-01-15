@@ -3,7 +3,7 @@ const request = require('supertest');
 
 const app = require('../../server');
 const User = require('../../models/user');
-const {users, populateUsers} = require('./seed.js');
+const {users, newUsers, populateUsers} = require('./seed.js');
 
 describe('User API', () => {
   beforeEach(populateUsers);
@@ -30,6 +30,54 @@ describe('User API', () => {
           expect(res.body._id).toBe(currentUser._id.toString());
           expect(res.body.username).toBe(currentUser.username);
           expect(res.body.email).toBe(currentUser.email);
+        })
+        .end(done);
+    });
+  });
+
+  describe('POST /users', () => {
+    let badNewUser = {
+      username: 'bob'
+    };
+
+    it('should return a 400 if the correct data isn\'t provided', (done) => {
+      request(app)
+        .post('/users')
+        .send(badNewUser)
+        .expect(400)
+        .expect((res) => {
+          expect(res.body).toEqual({});
+        })
+        .end(done);
+    });
+
+    it('should create a new user if their username and email are unique', (done) => {
+      request(app)
+        .post('/users')
+        .send(newUsers[0])
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.user.username).toBe(newUsers[0].username);
+          expect(res.body.user.email).toBe(newUsers[0].email);
+
+
+        })
+        .end(done);
+    });
+
+    it('should return a 400 if new user\'s email is not unique', (done) => {
+      let existingUser = {
+        username: users[0].username,
+        email: users[0].email,
+        password: users[0].password
+      };
+
+      request(app)
+        .post('/users')
+        .send(users[0])
+        .expect(400)
+        .expect((res) => {
+          expect(res.body).toEqual({});
         })
         .end(done);
     });
