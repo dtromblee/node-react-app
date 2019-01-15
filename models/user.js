@@ -2,6 +2,8 @@ let mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const {SECRET_KEY} = require('../utils/config');
+const bcrypt = require('bcryptjs');
 
 let schema = new mongoose.Schema({
 	username: {
@@ -46,15 +48,43 @@ schema.methods.toJSON = function() {
 };
 
 schema.methods.generateAuthToken = function() {
-	let salt = 'rapiddeploymentsalmondrops';
 	let access = 'auth';
-	let token = jwt.sign({_id: this._id.toHexString(), access}, salt).toString();
+	let token = jwt.sign({_id: this._id.toHexString(), access}, SECRET_KEY).toString();
 
 	this.tokens.push({access, token});
 	return this.save().then(() => {
 		return token;
 	});
 };
+
+schema.statics.findByToken = function(token) {
+	let decoded = undefined;
+
+	try {
+		decoded = jwt.verify(token, SECRET_KEY);
+	} catch (e) {
+		return Promise.reject();
+	}
+
+	return this.findOne({
+		_id: decoded._id,
+		'tokens.token': token,
+		'tokens.access': 'auth'
+	});
+};
+
+schema.pre('save', function(next) {
+	if (this.isModified('password')) {
+		bcrypt.genSalt(10, (err, salt) => {
+			bcrypt.hash(this.password, salt, (err, hash) => {
+					this.password = hash;
+					next();
+			});
+		});
+	} else {
+		next();
+	}
+});
 
 var model = mongoose.model('User', schema);
 

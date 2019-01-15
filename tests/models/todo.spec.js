@@ -4,34 +4,11 @@ const {ObjectID} = require('mongodb');
 
 const app = require('../../server');
 const Todo = require('../../models/todo');
-
-let counter = 0;
-
-const todos = [{
-  _id: new ObjectID(),
-  title: `Sample ${++counter}`,
-  description: `Description for Sample ${counter}`
-},
-{
-  _id: new ObjectID(),
-  title: `Sample ${++counter}`,
-  description: `Description for Sample ${counter}`
-},
-{
-  _id: new ObjectID(),
-  title: `Sample ${++counter}`,
-  description: `Description for Sample ${counter}`
-}];
+const {todos, populateTodos} = require('./seed');
 
 describe('Todo API', () => {
 
-  beforeEach((done) => {
-    Todo.deleteMany({}).then(() => {
-      Todo.insertMany(todos).then((docs) => { done(); }, (err) => { done(err); });
-    }, (err) => {
-      return done(err);
-    });
-  });
+  beforeEach(populateTodos);
 
   describe('GET /todos', () => {
     it('should return all todos', (done) => {
@@ -39,7 +16,7 @@ describe('Todo API', () => {
         .get('/todos')
         .expect(200)
         .expect((res) => {
-          expect(res.body.results.length).toBe(3);
+          expect(res.body.results.length).toBe(todos.length);
         })
         .end(done);
     });
@@ -69,8 +46,8 @@ describe('Todo API', () => {
 
   describe('POST /todos', () => {
     const newTodo = {
-      title: `Sample ${++counter}`,
-      description: `Description for Sample ${counter}`
+      title: `Sample ${todos.length + 1}`,
+      description: `Description for Sample ${todos.length + 1}`
     };
 
     it('should create a new todo', (done) => {
@@ -97,7 +74,7 @@ describe('Todo API', () => {
   });
 
   describe('PATCH /todos/:id', () => {
-    it('should update the expected todo with the supplied properties', () => {
+    it('should update the expected todo with the supplied properties', (done) => {
       let id = todos[0]._id.toString();
       let updateValues = {
         description: 'New Description',
@@ -111,17 +88,10 @@ describe('Todo API', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.result).not.toEqual(undefined);
+          expect(res.body.result.description).toEqual(updateValues.description);
+          expect(res.body.result.completed).toEqual(updateValues.completed);
         })
-        .end((err, res) => {
-          if (err) return done(err);
-
-          Todo.findById(id).then((todo) => {
-            expect(todo.description).toEqual(description);
-            expect(todo.completed).toEqual(completed);
-            expect(todo.completedAt).toEqual(completedAt);
-            done();
-          })
-        });
+        .end(done);
     });
   });
 

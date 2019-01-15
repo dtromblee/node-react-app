@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../models/user');
 const _ = require('lodash');
+const jwt = require('jsonwebtoken');
+const {authenticate} = require('../middlewares/authenticate');
 
 let router = express.Router();
 
@@ -16,20 +18,24 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
-  User.findById(req.params.id)
-    .then((result) => {
-      if(result) {
-        res.send({result});
-      } else {
-        res.status(404).send('User not found');
-      }
-    }, (err) => {
-      res.send(err);
-    })
-    .catch((err) =>  {
-      res.status(400).send(err);
-    });
+// router.get('/:id', (req, res) => {
+//   User.findById(req.params.id)
+//     .then((result) => {
+//       if(result) {
+//         res.send({result});
+//       } else {
+//         res.status(404).send('User not found');
+//       }
+//     }, (err) => {
+//       res.send(err);
+//     })
+//     .catch((err) =>  {
+//       res.status(400).send(err);
+//     });
+// });
+
+router.get('/me', authenticate, (req, res) => {
+  res.send(req.user);
 });
 
 router.post('/', (req, res) => {
@@ -44,8 +50,6 @@ router.post('/', (req, res) => {
       res.status(400).send(err);
     })
     .then((token) => {
-      // let result = user.toJSON();
-      // res.header('x-auth', token).send({result});
       res.header('x-auth', token).send({user});
     }, (err) => {
       res.status(400).send(err);

@@ -82,7 +82,7 @@ router.delete('/:id', (req, res) => {
       if (result) {
         res.send(result);
       } else {
-        res.status(400).send('Todo could not be deleted');
+        return res.status(400).send('Todo could not be deleted');
       }
     }, (err) => {
       res.status(404).send(err);
@@ -99,7 +99,7 @@ function _setCompletedAt(todo, isNew) {
   } else if (!todo.completed) {
     todo.completedAt = null;
   }
-  console.log(todo);
+
   return todo;
 }
 
