@@ -82,4 +82,39 @@ describe('User API', () => {
         .end(done);
     });
   });
+
+  describe('POST /users/login', () => {
+    it('should return a 400 for an incorrect email or password', (done) => {
+      let badCredentials = {
+        email: users[0].email,
+        password: 'letmein'
+      };
+
+      request(app)
+        .post('/users/login')
+        .send(badCredentials)
+        .expect(400)
+        .end(done);
+    });
+
+    it('should return the user\'s id, username and email, as well as set auth token, when provided correct credentials', (done) => {
+      let goodCredentials = {
+        email: users[0].email,
+        password: users[0].password
+      };
+
+      request(app)
+        .post('/users/login')
+        .send(goodCredentials)
+        .expect(200)
+        .expect((res) => {
+          // console.log('***res***', res);
+          expect(res.body._id).toBe(users[0]._id.toString());
+          expect(res.body.email).toBe(users[0].email);
+          expect(res.body.username).toBe(users[0].username);
+          expect(res.headers['x-auth']).toBe(users[0].tokens[0].token);
+        })
+        .end(done);
+    });
+  });
 });

@@ -48,7 +48,6 @@ router.post('/', (req, res) => {
     .then(() => {
       return user.generateAuthToken();
     }, (err) => {
-      console.error(err);
       res.status(400).send({});
     })
     .then((token) => {
@@ -57,7 +56,6 @@ router.post('/', (req, res) => {
       res.status(400).send({});
     })
     .catch((err) => {
-      console.error(err);
       res.status(400).send({});
     });
 });
@@ -67,7 +65,7 @@ router.post('/login', (req, res) => {
 
   User.findByCredentials(validValues.email, validValues.password)
     .then((user) => {
-        let data = _.pick(user, ['username', 'email', 'password']);
+        let data = _.pick(user, ['_id', 'username', 'email']);
         res.header('x-auth', user.tokens[0].token).send(data);
     })
     .catch((err) => {

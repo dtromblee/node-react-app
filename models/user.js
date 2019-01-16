@@ -75,25 +75,26 @@ schema.statics.findByToken = function(token) {
 
 schema.statics.findByCredentials = function(email, password) {
   return this.findOne({email: email})
-  .then((user) => {
-    if (!user) {
-      return Promise.reject();
-    }
+    .then((user) => {
+      if (!user) {
+        return Promise.reject();
+      }
 
-    return new Promise((resolve, reject) => {
-      bcrypt.compare(password, user.password)
-      .then((result) => {
-        if (result) {
-          resolve(user);
-        } else {
-          reject();
-        }
-      })
+      return new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.password)
+        .then((result) => {
+          if (result) {
+            // resolve(user);
+            return user;
+          } else {
+            reject();
+          }
+        })
+      });
+    })
+    .catch((err) => {
+      return Promise.reject();
     });
-  })
-  .catch((err) => {
-    return Promise.reject();
-  });
 };
 
 schema.pre('save', function(next) {
